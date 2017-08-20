@@ -59,6 +59,20 @@ class QPlayer < Player
     actions[action_taken_index]
   end
 
+  # This method will be called on game stop, the returned string will be printed
+  #
+  # @return [String]
+  def stop
+    <<~TEXT.strip_heredoc
+      Q-Table:
+
+      #{([:state] + actions).flatten}
+      #{q_table.length.times.map { |i| ([i] + q_table[i]).flatten.to_s }.join("\n")}
+
+      #{super}
+    TEXT
+  end
+
   private
 
   def calculate_q_table_state
