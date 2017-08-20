@@ -2,23 +2,6 @@ AllCops:
   TargetRubyVersion: '2.4.1'
   EnabledByDefault: true
   UseCache: false
-  Include:
-    - '**/Rakefile'
-    - '**/config.ru'
-  Exclude:
-    - 'db/**/*'
-    - 'config/**/*'
-    - 'script/**/*'
-    - !ruby/regexp /old_and_unused\.rb$/
-
-Rails:
-  Enabled: true
-
-Rails/HasAndBelongsToMany:
-  Enabled: false
-
-Rails/SaveBang:
-  Enabled: false
 
 Bundler/OrderedGems:
   Exclude:
