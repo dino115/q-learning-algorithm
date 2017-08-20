@@ -1,5 +1,6 @@
-require './player'
 require 'io/console'
+
+require './lib/player'
 
 class HumanPlayer < Player
   # get input of the human player

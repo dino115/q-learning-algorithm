@@ -1,4 +1,4 @@
-require './player'
+require './lib/player'
 
 class QPlayer < Player
   attr_reader :actions, :q_table,

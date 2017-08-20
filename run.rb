@@ -3,9 +3,9 @@ require 'bundler/setup'
 require 'optparse'
 require 'active_support/all'
 
-require './human_player'
-require './q_player'
-require './game'
+require './lib/human_player'
+require './lib/q_player'
+require './lib/game'
 
 # Run game with different options...
 Options = Struct.new(:player, :runs, :map_size, :start_pos, :cheese_pos, :pit_pos, :max_score)
@@ -59,4 +59,4 @@ args.runs.times do
   game.reset
 end
 
-puts "\nGame completet, you played #{args.runs} runs"
+puts "\nGame completed, you played #{args.runs} runs"
