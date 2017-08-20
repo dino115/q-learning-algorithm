@@ -3,6 +3,9 @@ AllCops:
   EnabledByDefault: true
   UseCache: false
 
+Rails:
+  Enabled: false
+
 Bundler/OrderedGems:
   Exclude:
     - 'Gemfile'
