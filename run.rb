@@ -7,57 +7,56 @@ require './human_player'
 require './q_player'
 require './game'
 
-Options = Struct.new(:player, :map_size, :start_pos, :cheese_pos, :pit_pos)
+# Run game with different options...
+Options = Struct.new(:player, :runs, :map_size, :start_pos, :cheese_pos, :pit_pos, :max_score)
+args = Options.new('HumanPlayer', 10, 12, 3, 10, 0, 5)
+parser =
+  OptionParser.new do |opts|
+    opts.banner = 'Run the game in different modes. Usage: run.rb [options]'
 
-class Parser
-  # option parse
-  def self.parse(options)
-    args = Options.new('HumanPlayer', 12, 3, 10, 0)
-
-    opt_parser = OptionParser.new do |opts|
-      opts.banner = 'Usage: run.rb [options]'
-
-      opts.on('-gPLAYER', '--player=PLAYER', 'Used player class') do |g|
-        args.player = g
-      end
-
-      opts.on('-mMAP_SIZE', '--map-size=MAP_SIZE', 'Used map size') do |m|
-        args.map_size = m
-      end
-
-      opts.on('-cCHEESE_POS', '--cheese-pos=CHEESE_POS', 'Cheese position') do |c|
-        args.cheese_pos = c
-      end
-
-      opts.on('-pPIT_POS', '--pit-pos=PIT_POS', 'Pit position') do |p|
-        args.pit_pos = p
-      end
-
-      opts.on('-h', '--help', 'Prints this help') do
-        puts opts
-        exit
-      end
+    opts.on('-g', '--player=PLAYER', String, 'Used player class') do |g|
+      args.player = g
     end
 
-    opt_parser.parse!(options)
+    opts.on('-r', '--runs=RUNS', Integer, 'How many runs to play') do |r|
+      args.runs = r
+    end
 
-    args
+    opts.on('-m', '--map-size=MAPSIZE', Integer, 'Used map size') do |m|
+      args.map_size = m
+    end
+
+    opts.on('-c', '--cheese-pos=CHEESEPOS', Integer, 'Cheese position') do |c|
+      args.cheese_pos = c
+    end
+
+    opts.on('-p', '--pit-pos=PITPOS', Integer, 'Pit position') do |p|
+      args.pit_pos = p
+    end
+
+    opts.on('-s', '--max-score=MAXSCORE', Integer, 'The maximum score') do |s|
+      args.max_score = s
+    end
+
+    opts.on('-h', '--help', 'Prints this help') do
+      puts opts
+      exit
+    end
   end
-end
 
-options = Parser.parse %w[--help]
-player_klass = options.delete(:player).constantize
-player = player_klass.new
+parser.parse!
 
-game = Game.new(player, options)
+# Initialize game
+player_klass = args.player.constantize
+game = Game.new(
+  player_klass,
+  args.to_h.slice(:map_size, :start_pos, :cheese_pos, :pit_pos, :max_score),
+)
 
-if player.is_a?(HumanPlayer)
+# Run
+args.runs.times do
   game.run
-else
-  10.times do
-    game.run
-    game.reset
-  end
-
-  puts 'Done'
+  game.reset
 end
+
+puts "\nGame completet, you played #{args.runs} runs"

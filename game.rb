@@ -1,5 +1,13 @@
 class Game
-  attr_reader :player, :score, :run, :moves, :map_size, :start_pos, :cheese_pos, :pit_pos
+  attr_reader :player,
+    :score, :runs, :moves,
+    :map_size, :start_pos, :cheese_pos, :pit_pos, :max_score
+
+  PLAYER = 'P'.freeze
+  CHEESE = 'C'.freeze
+  PIT = 'O'.freeze
+  MAP = '='.freeze
+  WALL = '#'.freeze
 
   # constructor
   #
@@ -9,13 +17,15 @@ class Game
   # @option opts [Integer] :start_pos, default: 3
   # @option opts [Integer] :cheese_pos, default: 10
   # @option opts [Integer] :pit_pos, default: 0
+  # @option opts [Integer] :max_score, default: 5
   def initialize(player, opts = {})
-    @run = 0
+    @runs = 0
     @player = player.new(self)
     @map_size = opts.fetch(:map_size, 12)
     @start_pos = opts.fetch(:start_pos, 3)
     @cheese_pos = opts.fetch(:cheese_pos, 10)
     @pit_pos = opts.fetch(:pit_pos, 0)
+    @max_score = opts.fetch(:max_score, 5)
 
     reset
 
@@ -25,46 +35,53 @@ class Game
 
   # reset game state
   def reset
-    @run += 1
+    @runs += 1
     @score = 0
     @moves = 0
 
-    @player.x = start_pos
+    player.x = start_pos
   end
 
   # run the game
   def run
-    while score < 5 && score > -5
+    start_time = Time.now
+
+    while score.between?(0 - max_score + 1, max_score - 1)
       draw
-      gameloop
+      handle_player_input
+      check_player_pos
       @moves += 1
     end
 
     # draw one last time to update
     draw
 
-    if @score >= 5
-      puts "  You win in #{@moves} moves!"
-    else
-      puts '  Game over'
-    end
+    play_time = Time.now - start_time
 
+    if score >= max_score
+      puts " | Time #{play_time}s | You win in #{moves} moves!"
+    else
+      puts " | Time #{play_time}s | Game over after #{moves} moves..."
+    end
   end
 
-  # the gameloop
-  def gameloop
-    move = player.input
+  private
 
-    case move
+  # move the player according to the given input
+  def handle_player_input
+    case player.input
       when :left
         player.x = player.x.positive? ? player.x - 1 : map_size - 1
       when :right
         player.x = player.x < map_size - 1 ? player.x + 1 : 0
       when :exit
-        puts 'Quit Game...'
+        puts "\nQuit Game..."
         exit
     end
+  end
 
+  # check the player position to calculate the score and maybe reset the player to the beginning
+  def check_player_pos
     if player.x == cheese_pos
       @score += 1
       player.x = start_pos
@@ -74,24 +91,20 @@ class Game
     end
   end
 
-  # draw the game
+  # draw the game map
   def draw
-    map_line = Array(map_size).map do |i|
-      if player.x == i
-        'P'
-      elsif cheese_pos == i
-        'C'
-      elsif pit_pos == i
-        'O'
-      else
-        '='
+    map_line =
+      (0...map_size).map do |i|
+        case i
+          when player.x then PLAYER
+          when cheese_pos then CHEESE
+          when pit_pos then PIT
+          else MAP
+        end
       end
-    end
-
-    map_line = "\r##{map_line.join}# | Score #{score} | Run #{run}"
 
     # Draw to console
     # use printf because we want to update the line rather than print a new one
-    printf("%s", map_line)
+    print "\r#{WALL}#{map_line.join}#{WALL} | Score #{score} | Run #{runs}"
   end
 end

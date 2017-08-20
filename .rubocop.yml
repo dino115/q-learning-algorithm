@@ -74,7 +74,7 @@ Layout/IndentHash:
 
 Layout/MultilineAssignmentLayout:
   Enabled: true
-  EnforcedStyle: same_line
+  EnforcedStyle: new_line
 
 Layout/SpaceBeforeBlockBraces:
   Enabled: true
