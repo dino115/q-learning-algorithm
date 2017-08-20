@@ -18,9 +18,23 @@ class QPlayer < Player
     @r = Random.new
   end
 
+  # This method will be called on game start, the returned string will be printed
+  #
+  # @return [String]
+  def start
+    Signal.trap('INT') do # SIGINT = control-C
+      game.stop!
+    end
+
+    <<-HINT.strip_heredoc.freeze
+      Play the game with <QPlayer>. Lean back and watch the algorithm to learn playing the game.
+      Quit game: [ctrl]+[c]
+    HINT
+  end
+
   # get the AI's input
   #
-  # @return [Symbol] one of :nothing, :left, :right, :exit
+  # @return [Symbol] one of :left, :right, (:exit)
   def input
     sleep 0.05 # to follow the computed actions
 

@@ -9,7 +9,7 @@ class Player
 
   # get the players input
   #
-  # @return [Symbol] one of :nothing, :left, :right, :exit
+  # @return [Symbol] one of :left, :right, :exit
   def input
     raise NotImplementedError, 'Please implement input method on your player class'
   end
