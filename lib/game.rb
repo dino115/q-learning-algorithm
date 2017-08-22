@@ -84,9 +84,9 @@ class Game
     if score >= max_score
       win_text = "You win in #{moves.to_s.magenta} moves!".green
       win_text = win_text.blink if moves == moves_to_win
-      puts " | Time #{play_time.to_s.magenta}s | " + win_text
+      puts " | Time #{('%.6f' %  play_time).to_s.magenta}s | " + win_text
     else
-      puts " | Time #{play_time.to_s.magenta}s | " + "Game over after #{moves.to_s.magenta} moves...".red
+      puts " | Time #{('%.6f' % play_time).to_s.magenta}s | " + "Game over after #{moves.to_s.magenta} moves...".red
     end
   end
 
